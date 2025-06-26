@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import BookingSuccessPopup from './BookingSuccessPopup';
 import { useNavigate } from 'react-router-dom';
+const API = process.env.REACT_APP_API_URL;
 
 const BookingForm = ({ roomId }) => {
   const [fromDate, setFromDate] = useState('');
@@ -23,7 +24,7 @@ const BookingForm = ({ roomId }) => {
     e.preventDefault();
     try {
       await axios.post(
-        'https://backendofgridhotel.onrender.com/api/bookings/create',
+        `${API}/bookings/create`,
         { roomId, fromDate, toDate },
         {
           headers: { Authorization: `Bearer ${token}` },
