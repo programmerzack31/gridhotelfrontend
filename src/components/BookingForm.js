@@ -1,27 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import BookingSuccessPopup from './BookingSuccessPopup';
 import { useNavigate } from 'react-router-dom';
+
 const API = process.env.REACT_APP_API_URL;
 
 const BookingForm = ({ roomId }) => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
-   const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [dateError, setDateError] = useState('');
   const navigate = useNavigate();
-  const [token, setToken] = useState(null);
 
-  useEffect(() => {
-    const t = localStorage.getItem('token');
-    if (!t) {
-      navigate('/login');
-    } else {
-      setToken(t);
-    }
-  }, [navigate]);
+  const isDateValid = () => {
+    if (!fromDate || !toDate) return false;
+    return new Date(fromDate) <= new Date(toDate);
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
+    if (!isDateValid()) {
+      setDateError('From date must be before or equal to To date');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
     try {
       await axios.post(
         `${API}/bookings/create`,
@@ -30,7 +38,10 @@ const BookingForm = ({ roomId }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-         setShowPopup(true);
+      setShowPopup(true);
+      setFromDate('');
+      setToDate('');
+      setDateError('');
     } catch (error) {
       alert('Booking failed');
     }
@@ -45,19 +56,32 @@ const BookingForm = ({ roomId }) => {
           id="from"
           type="date"
           value={fromDate}
-          onChange={e => setFromDate(e.target.value)}
+          onChange={e => {
+            setFromDate(e.target.value);
+            setDateError('');
+          }}
           required
         />
+
         <label htmlFor="to">To Date</label>
         <input
           id="to"
           type="date"
           value={toDate}
-          onChange={e => setToDate(e.target.value)}
+          onChange={e => {
+            setToDate(e.target.value);
+            setDateError('');
+          }}
           required
         />
-        <button type="submit">Book Now</button>
+
+        {dateError && <p style={{ color: 'red' }}>{dateError}</p>}
+
+        <button type="submit" disabled={ !isDateValid()}>
+          Book Now
+        </button>
       </form>
+
       {showPopup && <BookingSuccessPopup onClose={() => setShowPopup(false)} />}
     </div>
   );

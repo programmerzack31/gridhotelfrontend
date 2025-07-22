@@ -68,6 +68,27 @@ body {
   gap: 24px;
 }
 
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: 0.1s;
+}
+
+.fade-in-up:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-up:nth-child(2) { animation-delay: 0.2s; }
+.fade-in-up:nth-child(3) { animation-delay: 0.3s; }
+.fade-in-up:nth-child(4) { animation-delay: 0.4s; }
+.fade-in-up:nth-child(5) { animation-delay: 0.5s; }
+.fade-in-up:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Room Card */
 .room-card {
   background-color: #1f1f1f;
@@ -375,20 +396,27 @@ body {
 }
 
 .booking-form button {
-  margin-top: 20px;
-  padding: 12px;
-  background-color: #4a90e2;
-  border: none;
+  background-color: #007BFF;
   color: white;
-  font-size: 16px;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 20px;
 }
 
-.booking-form button:hover {
-  background-color: #357ab8;
+.booking-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+.booking-form button:not(:disabled):hover {
+  background-color: #309fff;
   transform: scale(1.03);
+  transition: all .3s;
 }
 
 .dashboard-container {
